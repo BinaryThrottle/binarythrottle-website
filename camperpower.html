@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Camper Power — BinaryThrottle</title>
+  <meta name="description" content="A slim touchscreen that shows your van's batteries, solar, charging and heater at a glance. Camper Power is a 2.8 inch CYD monitor in a slim line case.">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+  <style>
+    :root {
+      --bg: #0b0d10;
+      --fg: #e6e6e6;
+      --muted: #8a8f98;
+      --accent: #ff6b35;
+      --border: #1d2025;
+      --code: rgba(127, 127, 127, 0.14);
+    }
+    @media (prefers-color-scheme: light) {
+      :root {
+        --bg: #fafafa;
+        --fg: #1a1a1a;
+        --muted: #666;
+        --accent: #ff6b35;
+        --border: #e5e5e5;
+        --code: rgba(0, 0, 0, 0.06);
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
+      padding:
+        max(1.25rem, env(safe-area-inset-top))
+        max(1.25rem, env(safe-area-inset-right))
+        max(2.75rem, env(safe-area-inset-bottom))
+        max(1.25rem, env(safe-area-inset-left));
+    }
+    @media (min-width: 40rem) {
+      body { padding-top: 2.5rem; padding-bottom: 4rem; }
+    }
+    main { max-width: 40rem; width: 100%; margin: 0 auto; }
+    .skip {
+      position: absolute;
+      left: 0.75rem;
+      top: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg);
+      color: var(--fg);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      transform: translateY(-150%);
+    }
+    .skip:focus { transform: none; }
+    .mark {
+      display: inline-flex;
+      align-items: center;
+      color: inherit;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      padding: 0.25rem 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      margin-bottom: 2rem;
+      min-height: 44px;
+    }
+    .mark .dot {
+      width: 0.5rem;
+      height: 0.5rem;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-right: 0.5rem;
+      flex: none;
+    }
+    h1 {
+      font-size: clamp(2.15rem, 9vw, 3.25rem);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      font-weight: 700;
+      text-wrap: balance;
+    }
+    .lede {
+      margin-top: 0.9rem;
+      font-size: 1.125rem;
+      line-height: 1.45;
+      text-wrap: pretty;
+    }
+    .context { margin-top: 0.75rem; color: var(--muted); }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1.5rem 0 0.25rem;
+    }
+    nav a, .repo {
+      transition: border-color 0.15s ease, color 0.15s ease;
+    }
+    nav a {
+      color: var(--fg);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.45rem 0.85rem;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.875rem;
+    }
+    nav a:hover { border-color: var(--accent); color: var(--accent); }
+    section {
+      padding: 1.6rem 0 0.2rem;
+      border-top: 1px solid var(--border);
+      margin-top: 1.6rem;
+      scroll-margin-top: 1rem;
+    }
+    h2 {
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 0.85rem;
+    }
+    h3 {
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+      margin: 1.2rem 0 0.35rem;
+    }
+    .card-body h3 { margin-top: 0; }
+    p + p { margin-top: 0.75rem; }
+    .shows, .systems { list-style: none; }
+    .shows li {
+      position: relative;
+      padding: 0.35rem 0 0.35rem 1.05rem;
+    }
+    .shows li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.75rem;
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .systems li {
+      padding: 0.8rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .systems li:last-child { border-bottom: 0; }
+    .name { display: block; font-weight: 600; }
+    .detail { display: block; color: var(--muted); margin-top: 0.1rem; }
+    .planned { margin-top: 0.85rem; color: var(--muted); }
+    .planned .tag, .slot-label, .todo-label {
+      display: inline-block;
+      color: var(--accent);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .planned .tag { margin-right: 0.4rem; }
+    .cards { display: grid; gap: 0.85rem; }
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .slot {
+      aspect-ratio: 16 / 10;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 0.35rem;
+      text-align: center;
+      padding: 1rem;
+      border-bottom: 1px dashed var(--border);
+      background: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 10px,
+        rgba(127, 127, 127, 0.07) 10px,
+        rgba(127, 127, 127, 0.07) 11px
+      );
+    }
+    .slot-name { color: var(--muted); font-size: 0.875rem; }
+    .card-body { padding: 0.9rem 1rem 1rem; }
+    .card-body p { color: var(--muted); }
+    .more { margin-top: 0.85rem; }
+    ol { padding-left: 1.35rem; }
+    ol li + li { margin-top: 0.45rem; }
+    code, kbd {
+      font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.86em;
+      background: var(--code);
+      padding: 0.12em 0.38em;
+      border-radius: 4px;
+    }
+    main :is(p, li) a {
+      color: var(--accent);
+      text-underline-offset: 0.18em;
+    }
+    .safety {
+      border: 1px solid var(--accent);
+      border-radius: 10px;
+      padding: 1rem 1.05rem;
+    }
+    .safety h2 { color: var(--accent); }
+    .safety p { font-size: 1.2rem; line-height: 1.4; font-weight: 600; }
+    .todo {
+      margin-top: 0.9rem;
+      border: 1px dashed var(--accent);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+    }
+    .todo p { margin-top: 0.35rem; }
+    footer {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+    footer a { color: var(--muted); }
+    a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+  <main id="content">
+    <a class="mark" href="/"><span class="dot" aria-hidden="true"></span>BinaryThrottle</a>
+
+    <h1>Camper Power</h1>
+    <p class="lede">A slim touchscreen that shows your van’s batteries, solar, charging and heater at a glance.</p>
+    <p class="context">A 2.8″ CYD touchscreen monitor in a slim line case. Optional desk mount and wall mount.</p>
+
+    <nav aria-label="On this page">
+      <a href="#shows">Shows</a>
+      <a href="#connects">Connects</a>
+      <a href="#case">Case</a>
+      <a href="#setup">Setup</a>
+      <a href="#safety">Safety</a>
+      <a href="#enquire">Enquire</a>
+    </nav>
+
+    <section id="shows" aria-labelledby="shows-title">
+      <h2 id="shows-title">What it shows</h2>
+      <ul class="shows">
+        <li>Live battery %</li>
+        <li>Volts and amps</li>
+        <li>Solar today and 7-day history</li>
+        <li>DC-DC charging</li>
+        <li>Heater control</li>
+      </ul>
+    </section>
+
+    <section id="connects" aria-labelledby="connects-title">
+      <h2 id="connects-title">What it connects to</h2>
+      <ul class="systems">
+        <li>
+          <span class="name">JBD / Xiaoxiang BMS</span>
+          <span class="detail">Including Fogstar Drift and EcoWorthy</span>
+        </li>
+        <li>
+          <span class="name">JK BMS</span>
+        </li>
+        <li>
+          <span class="name">Daly BMS</span>
+        </li>
+        <li>
+          <span class="name">Renogy BT-1 / BT-2</span>
+          <span class="detail">Rover MPPT, DC-DC chargers, batteries</span>
+        </li>
+        <li>
+          <span class="name">Victron Instant Readout</span>
+          <span class="detail">SmartSolar, Orion / DC-DC, SmartShunt / BMV, Smart Lithium, inverters, chargers</span>
+        </li>
+        <li>
+          <span class="name">Victron VE.Direct</span>
+          <span class="detail">Wired</span>
+        </li>
+        <li>
+          <span class="name">Chinese diesel heater</span>
+          <span class="detail">Bluetooth</span>
+        </li>
+      </ul>
+      <p class="planned"><span class="tag">Planned</span> EcoFlow, Jackery.</p>
+    </section>
+
+    <section id="case" aria-labelledby="case-title">
+      <h2 id="case-title">Case and mounts</h2>
+      <div class="cards">
+        <article class="card">
+          <div class="slot" role="img" aria-label="Product photo to be added: slim line case">
+            <span class="slot-label">Product photo to be added</span>
+            <span class="slot-name">Slim line case</span>
+          </div>
+          <div class="card-body">
+            <h3>Slim line case</h3>
+            <p>The monitor, in its slim line case.</p>
+          </div>
+        </article>
+        <article class="card">
+          <div class="slot" role="img" aria-label="Product photo to be added: desk mount">
+            <span class="slot-label">Product photo to be added</span>
+            <span class="slot-name">Desk mount</span>
+          </div>
+          <div class="card-body">
+            <h3>Desk mount</h3>
+            <p>Optional.</p>
+          </div>
+        </article>
+        <article class="card">
+          <div class="slot" role="img" aria-label="Product photo to be added: wall mount">
+            <span class="slot-label">Product photo to be added</span>
+            <span class="slot-name">Wall mount</span>
+          </div>
+          <div class="card-body">
+            <h3>Wall mount</h3>
+            <p>Optional.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="setup" aria-labelledby="setup-title">
+      <h2 id="setup-title">Easy setup</h2>
+      <p>Use Autodetect to scan for a supported system. Victron Instant Readout keys are entered on the display’s access-point page.</p>
+      <p class="more"><a href="#setup-help">Victron key steps</a></p>
+    </section>
+
+    <section id="setup-help" aria-labelledby="setup-help-title">
+      <h2 id="setup-help-title">Setup help</h2>
+      <h3>Autodetect</h3>
+      <p>Use Autodetect scan to find supported devices.</p>
+      <h3>Victron key</h3>
+      <p>Instant Readout needs the encryption key from Victron Connect.</p>
+      <ol>
+        <li>Open Victron Connect App on your mobile: Select Device.</li>
+        <li>Cog / settings → 3-dot menu → Product info → Instant readout via Bluetooth → Show encryption data.</li>
+        <li>Copy the key.</li>
+        <li>On the CYD, tap <kbd>AP</kbd>.</li>
+        <li>Join the <code>CamperPower-XXXX</code> Wi-Fi with the password shown on the display.</li>
+        <li>Open <a href="http://192.168.4.1">http://192.168.4.1</a> and paste the key, or tap <kbd>EDIT</kbd> to type it.</li>
+      </ol>
+    </section>
+
+    <section id="safety" aria-labelledby="safety-title">
+      <div class="safety">
+        <h2 id="safety-title">Heater safety</h2>
+        <p>Follow Heater Guidelines. Vent, Use CO alarm.</p>
+      </div>
+    </section>
+
+    <section id="power" aria-labelledby="power-title">
+      <h2 id="power-title">Power supply</h2>
+      <p>If it doesn’t start at power-on until you press reset, the supply is likely rising too slowly. Use a clean, fast-rising 5V supply rated 1A or more.</p>
+    </section>
+
+    <section id="enquire" aria-labelledby="enquire-title">
+      <h2 id="enquire-title">Enquire</h2>
+      <p>Ask about a Camper Power monitor, the slim line case, or a desk or wall mount.</p>
+      <!-- TODO: point this at the site contact page when one exists. No contact link is on the site today. -->
+      <div class="todo">
+        <p class="todo-label">TODO</p>
+        <p>Add the enquire link. This site has no contact page yet.</p>
+      </div>
+    </section>
+
+    <footer>
+      <a href="https://github.com/BinaryThrottle/camper-combined-power-monitor">GitHub</a>
+    </footer>
+  </main>
+</body>
+</html>
