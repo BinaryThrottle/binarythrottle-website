@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>BinaryThrottle</title>
   <meta name="description" content="BinaryThrottle — coming soon.">
   <meta name="color-scheme" content="dark light">
@@ -65,9 +65,69 @@
       text-transform: uppercase;
       margin-bottom: 0;
     }
+    .pages {
+      position: fixed;
+      z-index: 1;
+      top: max(0.75rem, env(safe-area-inset-top));
+      right: max(0.75rem, env(safe-area-inset-right));
+    }
+    .pages:not([open]) nav { display: none; }
+    .pages summary {
+      list-style: none;
+      cursor: pointer;
+      width: 2.75rem;
+      height: 2.75rem;
+      display: grid;
+      place-items: center;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1;
+      border-radius: 999px;
+    }
+    .pages summary::-webkit-details-marker { display: none; }
+    .pages summary::marker { content: ""; }
+    .pages summary:hover,
+    .pages[open] summary { color: var(--accent); }
+    .pages summary:focus-visible,
+    .pages a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+    .pages nav {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.15rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.35rem;
+      min-width: 11.5rem;
+    }
+    .pages ul { list-style: none; }
+    .pages a {
+      color: var(--fg);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      min-height: 2.75rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+    .pages a:hover { color: var(--accent); }
   </style>
 </head>
 <body>
+  <details class="pages">
+    <summary aria-label="Pages"><span aria-hidden="true">π</span></summary>
+    <nav aria-label="Pages">
+      <ul>
+        <li><a href="/camperpower">Camper Power</a></li>
+        <li><a href="/wledremote">WLED Remote</a></li>
+      </ul>
+    </nav>
+  </details>
   <main>
     <div class="mark"><span class="dot"></span>BinaryThrottle</div>
     <p class="coming-soon">Website Coming Soon</p>
