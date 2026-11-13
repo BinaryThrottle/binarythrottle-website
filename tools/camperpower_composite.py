@@ -95,7 +95,7 @@ def chroma_mask(chroma):
     return np.clip(g / 255.0, 0.0, 1.0)
 
 
-def composite(view, renders, shot):
+def composite(view, renders, shot, glow_rgb=GLOW):
     base = Image.open(os.path.join(renders, f"front_{view}.png")).convert("RGB")
     chroma = Image.open(os.path.join(renders, f"front_{view}_chroma.png"))
     a = chroma_mask(chroma)[..., None]
@@ -115,7 +115,7 @@ def composite(view, renders, shot):
     near = np.asarray(glow_src.filter(ImageFilter.GaussianBlur(18))).astype(np.float32)
     far = np.asarray(glow_src.filter(ImageFilter.GaussianBlur(70))).astype(np.float32)
     lum = (0.5 * near.mean(-1, keepdims=True) + 1.2 * far.mean(-1, keepdims=True)) / 255
-    glow = lum * np.asarray(GLOW, dtype=np.float32) * 0.55
+    glow = lum * np.asarray(glow_rgb, dtype=np.float32) * 0.55
     out = out + glow * (1 - a)
 
     # Map the render's #0a0a0a background to the page's #000.
@@ -123,13 +123,14 @@ def composite(view, renders, shot):
     return Image.fromarray(np.clip(out + 0.5, 0, 255).astype(np.uint8))
 
 
-def export(img, view, name):
+def export(img, view, name, assets=ASSETS, cropped=False):
     (x, y, w, h), widths = CROPS[view]
-    img = img.crop((x, y, x + w, y + h))
+    if not cropped:
+        img = img.crop((x, y, x + w, y + h))
     for width in widths:
         size = (width, round(h * width / w))
         im = img if size == img.size else img.resize(size, Image.LANCZOS)
-        stem = os.path.join(ASSETS, f"{name}-{width}")
+        stem = os.path.join(assets, f"{name}-{width}")
         im.save(stem + ".webp", "WEBP", quality=86, method=6)
         im.save(stem + ".jpg", "JPEG", quality=86, optimize=True, progressive=True, subsampling=0)
         print(f"{name}-{width}: {size[0]}x{size[1]}",
