@@ -8,7 +8,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#000000">
   <link rel="icon" href="data:,">
-  <link rel="preload" as="image" href="/assets/camperpower/case.svg" fetchpriority="high">
+  <link rel="preload" as="image" type="image/webp" imagesrcset="/assets/camperpower/hero-960.webp 960w, /assets/camperpower/hero-1240.webp 1240w" imagesizes="(min-width: 52rem) 48rem, 100vw" fetchpriority="high">
   <script>document.documentElement.classList.add('js');</script>
   <style>
     :root {
@@ -122,7 +122,6 @@
       align-items: center;
       padding: 6rem var(--pad-r) 2rem var(--pad);
       text-align: center;
-      background: radial-gradient(55% 45% at 50% 64%, #08181a 0%, #000 70%);
     }
     .hero-inner { display: grid; gap: 2.5rem; justify-items: center; }
     h1 {
@@ -139,43 +138,12 @@
       font-weight: 300;
       text-wrap: balance;
     }
-    .hero .device { width: min(100%, 50rem); }
-
-    /* Device: the case image with the real 320 x 240 screenshot set into its
-       screen opening. The percentages are the opening's box in case.svg
-       (x 116, y 84, 576 x 432 in a 920 x 620 viewBox). */
-    .device {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 920 / 620;
+    .hero .device {
+      width: min(100%, 48rem, calc((100vh - 24rem) * 1.6));
+      width: min(100%, 48rem, calc((100svh - 24rem) * 1.6));
+      min-width: min(100%, 20rem);
     }
-    .device-case { width: 100%; height: 100%; }
-    .device-screen,
-    .device::after {
-      position: absolute;
-      left: 12.6087%;
-      top: 13.5484%;
-      width: 62.6087%;
-      height: 69.6774%;
-    }
-    .device-screen {
-      image-rendering: crisp-edges;
-      image-rendering: pixelated;
-      box-shadow:
-        0 0 1.5rem rgba(24, 208, 224, 0.16),
-        0 0 5rem rgba(24, 208, 224, 0.10);
-    }
-    .device::after {
-      content: "";
-      pointer-events: none;
-      background: linear-gradient(125deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.015) 38%, transparent 38.5%);
-    }
-    .cue {
-      justify-self: center;
-      width: 1px;
-      height: 3rem;
-      background: linear-gradient(var(--muted), transparent);
-    }
+    .device img { width: 100%; height: auto; }
 
     /* Feature panels */
     .feature {
@@ -315,12 +283,10 @@
   </header>
 
   <!--
-    IMAGES live in /assets/camperpower/.
-    - Screens are real 320 x 240 captures from the Camper Power firmware
-      (camper-combined-power-monitor, docs/screenshots). To change one, drop a
-      new 320 x 240 PNG in the folder and change the .device-screen src.
-    - case.svg is a MOCKUP of the injection-moulded case, not CAD or a photo.
-      Replace it with a real product render or photo when one exists.
+    IMAGES live in /assets/camperpower/. Each is a real app screenshot
+    (320 x 240, from camper-combined-power-monitor) composited into a Blender
+    render of the injection-moulded case by tools/camperpower_composite.py,
+    exported as WebP with a JPG fallback at two widths.
   -->
   <main id="content">
     <section class="hero" aria-labelledby="title">
@@ -330,8 +296,10 @@
           <p>Your whole van’s power. One screen.</p>
         </div>
         <figure class="device reveal reveal-late">
-        <img class="device-case" src="/assets/camperpower/case.svg" width="920" height="620" fetchpriority="high" decoding="async" alt="">
-          <img class="device-screen" src="/assets/camperpower/12-overview.png" width="320" height="240" fetchpriority="high" decoding="async" alt="Camper Power overview screen: EcoWorthy battery at 87 percent, Renogy DC-DC charging at 21 amps and the diesel heater at 19 degrees.">
+          <picture>
+            <source type="image/webp" srcset="/assets/camperpower/hero-960.webp 960w, /assets/camperpower/hero-1240.webp 1240w" sizes="(min-width: 52rem) 48rem, 100vw">
+            <img src="/assets/camperpower/hero-1240.jpg" srcset="/assets/camperpower/hero-960.jpg 960w, /assets/camperpower/hero-1240.jpg 1240w" sizes="(min-width: 52rem) 48rem, 100vw" width="1240" height="776" fetchpriority="high" decoding="async" alt="Camper Power in its matte black case, showing the overview screen: EcoWorthy battery at 87 percent, Renogy DC-DC charging at 21 amps and the diesel heater at 19 degrees.">
+          </picture>
         </figure>
       </div>
       <span class="cue" aria-hidden="true"></span>
@@ -344,8 +312,10 @@
         <p>Live battery percentage, volts and amps, straight from your BMS.</p>
       </div>
       <figure class="device reveal reveal-late">
-        <img class="device-case" src="/assets/camperpower/case.svg" width="920" height="620" loading="lazy" decoding="async" alt="">
-        <img class="device-screen" src="/assets/camperpower/08-ecoworthy-battery.png" width="320" height="240" loading="lazy" decoding="async" alt="Battery screen: 87 percent charge, 13.32 volts, 8.40 amps, power, temperature, remaining amp-hours, cycles and cell balance.">
+        <picture>
+          <source type="image/webp" srcset="/assets/camperpower/battery-960.webp 960w, /assets/camperpower/battery-1520.webp 1520w" sizes="(min-width: 64rem) 58vw, 100vw">
+          <img src="/assets/camperpower/battery-1520.jpg" srcset="/assets/camperpower/battery-960.jpg 960w, /assets/camperpower/battery-1520.jpg 1520w" sizes="(min-width: 64rem) 58vw, 100vw" width="1520" height="950" loading="lazy" decoding="async" alt="Battery screen: 87 percent charge, 13.32 volts, 8.40 amps, power, temperature, remaining amp-hours, cycles and cell balance.">
+        </picture>
       </figure>
     </section>
 
@@ -356,8 +326,10 @@
         <p>DC-DC charging, solar and today’s yield, plus a 7-day history. From Victron and Renogy.</p>
       </div>
       <figure class="device reveal reveal-late">
-        <img class="device-case" src="/assets/camperpower/case.svg" width="920" height="620" loading="lazy" decoding="async" alt="">
-        <img class="device-screen" src="/assets/camperpower/09-renogy-bt2-dc-dc.png" width="320" height="240" loading="lazy" decoding="async" alt="Renogy DC-DC charger screen: charging at 21 amps in boost, with output, input, alternator, solar and today’s yield.">
+        <picture>
+          <source type="image/webp" srcset="/assets/camperpower/solar-960.webp 960w, /assets/camperpower/solar-1520.webp 1520w" sizes="(min-width: 64rem) 58vw, 100vw">
+          <img src="/assets/camperpower/solar-1520.jpg" srcset="/assets/camperpower/solar-960.jpg 960w, /assets/camperpower/solar-1520.jpg 1520w" sizes="(min-width: 64rem) 58vw, 100vw" width="1520" height="950" loading="lazy" decoding="async" alt="Renogy DC-DC charger screen: charging at 21 amps in boost, with output, input, alternator, solar and today’s yield.">
+        </picture>
       </figure>
     </section>
 
@@ -369,8 +341,10 @@
         <p class="note">Follow heater guidelines. Vent, use a CO alarm.</p>
       </div>
       <figure class="device reveal reveal-late">
-        <img class="device-case" src="/assets/camperpower/case.svg" width="920" height="620" loading="lazy" decoding="async" alt="">
-        <img class="device-screen" src="/assets/camperpower/10-diesel-heater.png" width="320" height="240" loading="lazy" decoding="async" alt="Diesel heater screen: running, cabin at 19 degrees, target 22, with temperature controls, a stop button and the CO alarm warning.">
+        <picture>
+          <source type="image/webp" srcset="/assets/camperpower/heater-960.webp 960w, /assets/camperpower/heater-1520.webp 1520w" sizes="(min-width: 64rem) 58vw, 100vw">
+          <img src="/assets/camperpower/heater-1520.jpg" srcset="/assets/camperpower/heater-960.jpg 960w, /assets/camperpower/heater-1520.jpg 1520w" sizes="(min-width: 64rem) 58vw, 100vw" width="1520" height="950" loading="lazy" decoding="async" alt="Diesel heater screen: running, cabin at 19 degrees, target 22, with temperature controls, a stop button and the CO alarm warning.">
+        </picture>
       </figure>
     </section>
 
@@ -381,8 +355,10 @@
         <p>Autodetect scans for supported systems. Victron keys go in on the display’s own Wi-Fi page.</p>
       </div>
       <figure class="device reveal reveal-late">
-        <img class="device-case" src="/assets/camperpower/case.svg" width="920" height="620" loading="lazy" decoding="async" alt="">
-        <img class="device-screen" src="/assets/camperpower/04-auto-detect-added.png" width="320" height="240" loading="lazy" decoding="async" alt="Autodetect screen: five devices detected, including a JBD BMS, a Renogy BT-2 and a diesel heater, with the heater just added.">
+        <picture>
+          <source type="image/webp" srcset="/assets/camperpower/setup-960.webp 960w, /assets/camperpower/setup-1520.webp 1520w" sizes="(min-width: 64rem) 58vw, 100vw">
+          <img src="/assets/camperpower/setup-1520.jpg" srcset="/assets/camperpower/setup-960.jpg 960w, /assets/camperpower/setup-1520.jpg 1520w" sizes="(min-width: 64rem) 58vw, 100vw" width="1520" height="950" loading="lazy" decoding="async" alt="Autodetect screen: five devices detected, including a JBD BMS, a Renogy BT-2 and a diesel heater, with the heater just added.">
+        </picture>
       </figure>
     </section>
 
@@ -396,7 +372,7 @@
         <div><dt>Renogy</dt><dd>BT-1 / BT-2: Rover MPPT, DC-DC, batteries</dd></div>
         <div><dt>Heater</dt><dd>Chinese diesel heater, Bluetooth</dd></div>
         <div><dt>Power</dt><dd>Clean, fast-rising 5V supply, 1A or more</dd></div>
-        <div><dt>Case</dt><dd>Slim line. Optional desk or wall mount</dd></div>
+        <div><dt>Case</dt><dd>Slim line, matte black. Optional desk or wall mount</dd></div>
         <div><dt>Planned</dt><dd>EcoFlow, Jackery</dd></div>
       </dl>
     </section>
