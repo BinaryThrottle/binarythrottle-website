@@ -8,7 +8,7 @@
   <meta name="color-scheme" content="dark">
   <meta name="theme-color" content="#000000">
   <link rel="icon" href="data:,">
-  <link rel="preload" as="image" href="/assets/camperpower/hero.svg" fetchpriority="high">
+  <link rel="preload" as="image" href="/assets/camperpower/case.svg" fetchpriority="high">
   <script>document.documentElement.classList.add('js');</script>
   <style>
     :root {
@@ -122,7 +122,7 @@
       align-items: center;
       padding: 6rem var(--pad-r) 2rem var(--pad);
       text-align: center;
-      background: radial-gradient(60% 45% at 50% 62%, #0e1a12 0%, #000 70%);
+      background: radial-gradient(55% 45% at 50% 64%, #08181a 0%, #000 70%);
     }
     .hero-inner { display: grid; gap: 2.5rem; justify-items: center; }
     h1 {
@@ -139,7 +139,37 @@
       font-weight: 300;
       text-wrap: balance;
     }
-    .hero-device { width: min(100%, 52rem); }
+    .hero .device { width: min(100%, 50rem); }
+
+    /* Device: the case image with the real 320 x 240 screenshot set into its
+       screen opening. The percentages are the opening's box in case.svg
+       (x 116, y 84, 576 x 432 in a 920 x 620 viewBox). */
+    .device {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 920 / 620;
+    }
+    .device-case { width: 100%; height: 100%; }
+    .device-screen,
+    .device::after {
+      position: absolute;
+      left: 12.6087%;
+      top: 13.5484%;
+      width: 62.6087%;
+      height: 69.6774%;
+    }
+    .device-screen {
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+      box-shadow:
+        0 0 1.5rem rgba(24, 208, 224, 0.16),
+        0 0 5rem rgba(24, 208, 224, 0.10);
+    }
+    .device::after {
+      content: "";
+      pointer-events: none;
+      background: linear-gradient(125deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0.015) 38%, transparent 38.5%);
+    }
     .cue {
       justify-self: center;
       width: 1px;
@@ -285,11 +315,12 @@
   </header>
 
   <!--
-    IMAGES: everything below lives in /assets/camperpower/.
-    The .svg files are PLACEHOLDER RENDERS, not the real product.
-    To swap in a real photo or screenshot, drop it in the same folder
-    (e.g. hero.jpg or hero.webp) and change the src. Keep the 8:5 ratio
-    (960 × 600, or a larger 8:5 size) and update width/height to match.
+    IMAGES live in /assets/camperpower/.
+    - Screens are real 320 x 240 captures from the Camper Power firmware
+      (camper-combined-power-monitor, docs/screenshots). To change one, drop a
+      new 320 x 240 PNG in the folder and change the .device-screen src.
+    - case.svg is a MOCKUP of the injection-moulded case, not CAD or a photo.
+      Replace it with a real product render or photo when one exists.
   -->
   <main id="content">
     <section class="hero" aria-labelledby="title">
@@ -298,8 +329,10 @@
           <h1 id="title">Camper Power</h1>
           <p>Your whole van’s power. One screen.</p>
         </div>
-        <!-- PLACEHOLDER: replace with real product photo, /assets/camperpower/hero.jpg -->
-        <img class="hero-device reveal reveal-late" src="/assets/camperpower/hero.svg" width="960" height="600" fetchpriority="high" decoding="async" alt="Camper Power: a 2.8 inch touchscreen on a yellow board, showing battery, solar, charging and heater on one dashboard.">
+        <figure class="device reveal reveal-late">
+        <img class="device-case" src="/assets/camperpower/case.svg" width="920" height="620" fetchpriority="high" decoding="async" alt="">
+          <img class="device-screen" src="/assets/camperpower/12-overview.png" width="320" height="240" fetchpriority="high" decoding="async" alt="Camper Power overview screen: EcoWorthy battery at 87 percent, Renogy DC-DC charging at 21 amps and the diesel heater at 19 degrees.">
+        </figure>
       </div>
       <span class="cue" aria-hidden="true"></span>
     </section>
@@ -310,9 +343,9 @@
         <h2 id="f-battery">Know your charge</h2>
         <p>Live battery percentage, volts and amps, straight from your BMS.</p>
       </div>
-      <figure class="reveal reveal-late">
-        <!-- PLACEHOLDER: replace with real screen photo, /assets/camperpower/screen-battery.jpg -->
-        <img src="/assets/camperpower/screen-battery.svg" width="960" height="600" loading="lazy" decoding="async" alt="Battery screen showing charge percentage, volts and amps.">
+      <figure class="device reveal reveal-late">
+        <img class="device-case" src="/assets/camperpower/case.svg" width="920" height="620" loading="lazy" decoding="async" alt="">
+        <img class="device-screen" src="/assets/camperpower/08-ecoworthy-battery.png" width="320" height="240" loading="lazy" decoding="async" alt="Battery screen: 87 percent charge, 13.32 volts, 8.40 amps, power, temperature, remaining amp-hours, cycles and cell balance.">
       </figure>
     </section>
 
@@ -320,11 +353,11 @@
       <div class="copy reveal">
         <span class="eyebrow">Solar &amp; charging</span>
         <h2 id="f-solar">Every watt, counted</h2>
-        <p>Solar today, a 7-day history and DC-DC charging, from Victron and Renogy.</p>
+        <p>DC-DC charging, solar and today’s yield, plus a 7-day history. From Victron and Renogy.</p>
       </div>
-      <figure class="reveal reveal-late">
-        <!-- PLACEHOLDER: replace with real screen photo, /assets/camperpower/screen-solar.jpg -->
-        <img src="/assets/camperpower/screen-solar.svg" width="960" height="600" loading="lazy" decoding="async" alt="Solar screen showing today’s yield, a 7-day bar chart and DC-DC charging current.">
+      <figure class="device reveal reveal-late">
+        <img class="device-case" src="/assets/camperpower/case.svg" width="920" height="620" loading="lazy" decoding="async" alt="">
+        <img class="device-screen" src="/assets/camperpower/09-renogy-bt2-dc-dc.png" width="320" height="240" loading="lazy" decoding="async" alt="Renogy DC-DC charger screen: charging at 21 amps in boost, with output, input, alternator, solar and today’s yield.">
       </figure>
     </section>
 
@@ -335,9 +368,9 @@
         <p>Control a Bluetooth Chinese diesel heater from the same screen.</p>
         <p class="note">Follow heater guidelines. Vent, use a CO alarm.</p>
       </div>
-      <figure class="reveal reveal-late">
-        <!-- PLACEHOLDER: replace with real screen photo, /assets/camperpower/screen-heater.jpg -->
-        <img src="/assets/camperpower/screen-heater.svg" width="960" height="600" loading="lazy" decoding="async" alt="Heater screen with target temperature, plus and minus buttons and an on button.">
+      <figure class="device reveal reveal-late">
+        <img class="device-case" src="/assets/camperpower/case.svg" width="920" height="620" loading="lazy" decoding="async" alt="">
+        <img class="device-screen" src="/assets/camperpower/10-diesel-heater.png" width="320" height="240" loading="lazy" decoding="async" alt="Diesel heater screen: running, cabin at 19 degrees, target 22, with temperature controls, a stop button and the CO alarm warning.">
       </figure>
     </section>
 
@@ -347,9 +380,9 @@
         <h2 id="f-setup">Finds it all</h2>
         <p>Autodetect scans for supported systems. Victron keys go in on the display’s own Wi-Fi page.</p>
       </div>
-      <figure class="reveal reveal-late">
-        <!-- PLACEHOLDER: replace with real screen photo, /assets/camperpower/screen-setup.jpg -->
-        <img src="/assets/camperpower/screen-setup.svg" width="960" height="600" loading="lazy" decoding="async" alt="Autodetect screen listing a BMS, a Victron solar charger, a Renogy DC-DC charger and a diesel heater as found.">
+      <figure class="device reveal reveal-late">
+        <img class="device-case" src="/assets/camperpower/case.svg" width="920" height="620" loading="lazy" decoding="async" alt="">
+        <img class="device-screen" src="/assets/camperpower/04-auto-detect-added.png" width="320" height="240" loading="lazy" decoding="async" alt="Autodetect screen: five devices detected, including a JBD BMS, a Renogy BT-2 and a diesel heater, with the heater just added.">
       </figure>
     </section>
 

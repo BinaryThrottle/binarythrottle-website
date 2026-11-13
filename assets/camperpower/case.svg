@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 620" width="920" height="620">
+  <!--
+    MOCKUP: a drawn injection-moulded case, not from CAD. Replace with a real
+    product photo or CAD render when one exists.
+    Scale: 10 units = 1 mm. Outer 88 x 56 mm around the 86 x 50 mm CYD board.
+    Screen opening (2.8" active area, 57.6 x 43.2 mm) is x=116 y=84 w=576 h=432;
+    camperpower.html positions the screenshot over exactly that box.
+  -->
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#30343a"/>
+      <stop offset=".45" stop-color="#202328"/>
+      <stop offset="1" stop-color="#16181b"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx=".22" cy="0" r=".9">
+      <stop offset="0" stop-color="#fff" stop-opacity=".09"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8a9099" stop-opacity=".9"/>
+      <stop offset=".25" stop-color="#5a6068" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#5a6068" stop-opacity=".08"/>
+    </linearGradient>
+    <linearGradient id="lip" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#050607"/>
+      <stop offset="1" stop-color="#1c1f23"/>
+    </linearGradient>
+    <filter id="grain" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .05 0"/>
+      <feComposite in2="SourceGraphic" operator="in"/>
+    </filter>
+  </defs>
+
+  <!-- body: depth, shell, matte texture, rim light -->
+  <rect x="20" y="34" width="880" height="560" rx="46" fill="#08090a"/>
+  <rect x="20" y="20" width="880" height="560" rx="46" fill="url(#body)"/>
+  <rect x="20" y="20" width="880" height="560" rx="46" fill="url(#sheen)"/>
+  <rect x="20" y="20" width="880" height="560" rx="46" fill="#000" filter="url(#grain)"/>
+  <rect x="21" y="21" width="878" height="558" rx="45" fill="none" stroke="url(#rim)" stroke-width="2"/>
+  <rect x="30" y="30" width="860" height="540" rx="38" fill="none" stroke="#fff" stroke-opacity=".035" stroke-width="1.5"/>
+
+  <!-- recessed screen window -->
+  <rect x="84" y="52" width="640" height="496" rx="16" fill="url(#lip)"/>
+  <path d="M100 547.5h608" stroke="#fff" stroke-opacity=".10" stroke-width="1.5" stroke-linecap="round"/>
+  <rect x="96" y="64" width="616" height="472" rx="6" fill="#030505"/>
+  <rect x="116" y="84" width="576" height="432" fill="#081010"/>
+
+  <!-- side bezel: light sensor, debossed wordmark, brand dot -->
+  <circle cx="806" cy="128" r="7" fill="#08090a"/>
+  <circle cx="806" cy="128" r="7" fill="none" stroke="#fff" stroke-opacity=".08" stroke-width="1.2"/>
+  <g font-family="system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="700" letter-spacing="7" text-anchor="middle">
+    <text transform="translate(813 300) rotate(90)" fill="#fff" fill-opacity=".05" y="1">CAMPER POWER</text>
+    <text transform="translate(813 300) rotate(90)" fill="#0f1114">CAMPER POWER</text>
+  </g>
+  <circle cx="806" cy="486" r="4.5" fill="#ff6b35"/>
+</svg>
