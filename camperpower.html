@@ -4,378 +4,401 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>Camper Power — BinaryThrottle</title>
-  <meta name="description" content="A slim touchscreen that shows your van's batteries, solar, charging and heater at a glance. Camper Power is a 2.8 inch CYD monitor in a slim line case.">
-  <meta name="color-scheme" content="dark light">
-  <meta name="theme-color" content="#0b0d10" media="(prefers-color-scheme: dark)">
-  <meta name="theme-color" content="#fafafa" media="(prefers-color-scheme: light)">
+  <meta name="description" content="Camper Power puts your van's battery, solar, charging and diesel heater on one 2.8 inch touchscreen.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="data:,">
+  <link rel="preload" as="image" href="/assets/camperpower/hero.svg" fetchpriority="high">
+  <script>document.documentElement.classList.add('js');</script>
   <style>
     :root {
-      --bg: #0b0d10;
-      --fg: #e6e6e6;
-      --muted: #8a8f98;
+      --bg: #000;
+      --fg: #f5f5f5;
+      --muted: #8c8c8c;
+      --line: #1f1f1f;
       --accent: #ff6b35;
-      --border: #1d2025;
-      --code: rgba(127, 127, 127, 0.14);
-    }
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #fafafa;
-        --fg: #1a1a1a;
-        --muted: #666;
-        --accent: #ff6b35;
-        --border: #e5e5e5;
-        --code: rgba(0, 0, 0, 0.06);
-      }
+      --pad: max(1.5rem, env(safe-area-inset-left));
+      --pad-r: max(1.5rem, env(safe-area-inset-right));
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { -webkit-text-size-adjust: 100%; }
+    html { -webkit-text-size-adjust: 100%; background: var(--bg); scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--fg);
-      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
-      padding:
-        max(1.25rem, env(safe-area-inset-top))
-        max(1.25rem, env(safe-area-inset-right))
-        max(2.75rem, env(safe-area-inset-bottom))
-        max(1.25rem, env(safe-area-inset-left));
+      font: 400 1rem/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-    @media (min-width: 40rem) {
-      body { padding-top: 2.5rem; padding-bottom: 4rem; }
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; }
+    a:focus-visible {
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
     }
-    main { max-width: 40rem; width: 100%; margin: 0 auto; }
     .skip {
       position: absolute;
-      left: 0.75rem;
-      top: 0.75rem;
-      padding: 0.5rem 0.75rem;
-      background: var(--bg);
-      color: var(--fg);
-      border: 1px solid var(--accent);
-      border-radius: 6px;
-      transform: translateY(-150%);
+      z-index: 20;
+      left: 1rem;
+      top: 1rem;
+      padding: 0.6rem 0.9rem;
+      background: var(--fg);
+      color: var(--bg);
+      transform: translateY(-200%);
     }
     .skip:focus { transform: none; }
-    .mark {
+
+    .eyebrow {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .btn {
       display: inline-flex;
       align-items: center;
-      color: inherit;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 1.25rem;
-      letter-spacing: -0.02em;
-      padding: 0.25rem 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      margin-bottom: 2rem;
-      min-height: 44px;
-    }
-    .mark .dot {
-      width: 0.5rem;
-      height: 0.5rem;
-      background: var(--accent);
-      border-radius: 50%;
-      margin-right: 0.5rem;
-      flex: none;
-    }
-    h1 {
-      font-size: clamp(2.15rem, 9vw, 3.25rem);
-      letter-spacing: -0.03em;
-      line-height: 1.05;
-      font-weight: 700;
-      text-wrap: balance;
-    }
-    .lede {
-      margin-top: 0.9rem;
-      font-size: 1.125rem;
-      line-height: 1.45;
-      text-wrap: pretty;
-    }
-    .context { margin-top: 0.75rem; color: var(--muted); }
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-      margin: 1.5rem 0 0.25rem;
-    }
-    nav a, .repo {
-      transition: border-color 0.15s ease, color 0.15s ease;
-    }
-    nav a {
+      justify-content: center;
+      min-height: 3rem;
+      padding: 0 1.75rem;
+      border: 2px solid var(--fg);
       color: var(--fg);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
       text-decoration: none;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      padding: 0.45rem 0.85rem;
-      min-height: 44px;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .btn:hover { background: var(--fg); color: var(--bg); }
+
+    /* Header */
+    .top {
+      position: absolute;
+      z-index: 10;
+      inset: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: max(1.25rem, env(safe-area-inset-top)) var(--pad-r) 0 var(--pad);
+    }
+    .brand {
       display: inline-flex;
       align-items: center;
+      gap: 0.55rem;
+      min-height: 44px;
+      font-weight: 700;
       font-size: 0.875rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
     }
-    nav a:hover { border-color: var(--accent); color: var(--accent); }
-    section {
-      padding: 1.6rem 0 0.2rem;
-      border-top: 1px solid var(--border);
-      margin-top: 1.6rem;
-      scroll-margin-top: 1rem;
-    }
-    h2 {
-      font-size: 1.3rem;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-      margin-bottom: 0.85rem;
-    }
-    h3 {
-      font-size: 1.05rem;
-      letter-spacing: -0.01em;
-      margin: 1.2rem 0 0.35rem;
-    }
-    .card-body h3 { margin-top: 0; }
-    p + p { margin-top: 0.75rem; }
-    .shows, .systems { list-style: none; }
-    .shows li {
-      position: relative;
-      padding: 0.35rem 0 0.35rem 1.05rem;
-    }
-    .shows li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0.75rem;
+    .brand .dot {
       width: 0.45rem;
       height: 0.45rem;
       border-radius: 50%;
       background: var(--accent);
     }
-    .systems li {
-      padding: 0.8rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-    .systems li:last-child { border-bottom: 0; }
-    .name { display: block; font-weight: 600; }
-    .detail { display: block; color: var(--muted); margin-top: 0.1rem; }
-    .planned { margin-top: 0.85rem; color: var(--muted); }
-    .planned .tag, .slot-label, .todo-label {
-      display: inline-block;
-      color: var(--accent);
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
       font-size: 0.75rem;
-      font-weight: 700;
-      letter-spacing: 0.06em;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--muted);
+      transition: color 0.2s ease;
+    }
+    .top-link:hover { color: var(--fg); }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      min-height: 100svh;
+      display: grid;
+      grid-template-rows: 1fr auto;
+      align-items: center;
+      padding: 6rem var(--pad-r) 2rem var(--pad);
+      text-align: center;
+      background: radial-gradient(60% 45% at 50% 62%, #0e1a12 0%, #000 70%);
+    }
+    .hero-inner { display: grid; gap: 2.5rem; justify-items: center; }
+    h1 {
+      font-size: clamp(2.75rem, 13vw, 8.5rem);
+      font-weight: 800;
+      line-height: 0.92;
+      letter-spacing: -0.02em;
       text-transform: uppercase;
     }
-    .planned .tag { margin-right: 0.4rem; }
-    .cards { display: grid; gap: 0.85rem; }
-    .card {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
+    .hero p {
+      margin-top: 1.25rem;
+      font-size: clamp(1.05rem, 2.4vw, 1.375rem);
+      color: #cfcfcf;
+      font-weight: 300;
+      text-wrap: balance;
     }
-    .slot {
-      aspect-ratio: 16 / 10;
+    .hero-device { width: min(100%, 52rem); }
+    .cue {
+      justify-self: center;
+      width: 1px;
+      height: 3rem;
+      background: linear-gradient(var(--muted), transparent);
+    }
+
+    /* Feature panels */
+    .feature {
       display: grid;
-      align-content: center;
-      justify-items: center;
-      gap: 0.35rem;
-      text-align: center;
-      padding: 1rem;
-      border-bottom: 1px dashed var(--border);
-      background: repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 10px,
-        rgba(127, 127, 127, 0.07) 10px,
-        rgba(127, 127, 127, 0.07) 11px
-      );
+      gap: 2.5rem;
+      align-items: center;
+      padding: 5.5rem var(--pad-r) 5.5rem var(--pad);
+      border-top: 1px solid var(--line);
     }
-    .slot-name { color: var(--muted); font-size: 0.875rem; }
-    .card-body { padding: 0.9rem 1rem 1rem; }
-    .card-body p { color: var(--muted); }
-    .more { margin-top: 0.85rem; }
-    ol { padding-left: 1.35rem; }
-    ol li + li { margin-top: 0.45rem; }
-    code, kbd {
-      font-family: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
-      font-size: 0.86em;
-      background: var(--code);
-      padding: 0.12em 0.38em;
-      border-radius: 4px;
+    .feature h2 {
+      margin-top: 1rem;
+      font-size: clamp(2rem, 7vw, 4rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.015em;
+      text-transform: uppercase;
+      text-wrap: balance;
     }
-    main :is(p, li) a {
+    .feature p {
+      margin-top: 1.25rem;
+      max-width: 28rem;
+      font-size: 1.0625rem;
+      color: #b5b5b5;
+      font-weight: 300;
+      text-wrap: pretty;
+    }
+    .feature .note {
+      margin-top: 1rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      letter-spacing: 0.04em;
       color: var(--accent);
-      text-underline-offset: 0.18em;
     }
-    .safety {
-      border: 1px solid var(--accent);
-      border-radius: 10px;
-      padding: 1rem 1.05rem;
+    .feature figure { width: 100%; }
+
+    /* Specs */
+    .specs {
+      padding: 5.5rem var(--pad-r) 5.5rem var(--pad);
+      border-top: 1px solid var(--line);
     }
-    .safety h2 { color: var(--accent); }
-    .safety p { font-size: 1.2rem; line-height: 1.4; font-weight: 600; }
-    .todo {
-      margin-top: 0.9rem;
-      border: 1px dashed var(--accent);
-      border-radius: 10px;
-      padding: 0.9rem 1rem;
+    .specs h2 { margin-bottom: 2.5rem; }
+    .specs dl {
+      display: grid;
+      grid-template-columns: 1fr;
+      max-width: 72rem;
+      margin: 0 auto;
     }
-    .todo p { margin-top: 0.35rem; }
-    footer {
-      margin-top: 2rem;
-      padding-top: 1rem;
-      border-top: 1px solid var(--border);
+    .specs div {
+      padding: 1.25rem 0;
+      border-top: 1px solid var(--line);
+    }
+    .specs dt {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
       color: var(--muted);
-      font-size: 0.875rem;
     }
-    footer a { color: var(--muted); }
-    a:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
+    .specs dd {
+      margin-top: 0.35rem;
+      font-size: 1.0625rem;
+      line-height: 1.45;
+    }
+    .specs .eyebrow { max-width: 72rem; margin: 0 auto 2.5rem; }
+
+    /* CTA + footer */
+    .cta {
+      padding: 7rem var(--pad-r) 7rem var(--pad);
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+    .cta h2 {
+      font-size: clamp(2.25rem, 8vw, 5rem);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.015em;
+      text-transform: uppercase;
+      text-wrap: balance;
+    }
+    .cta p {
+      margin: 1.25rem auto 2.25rem;
+      max-width: 26rem;
+      color: #b5b5b5;
+      font-weight: 300;
+    }
+    footer {
+      padding: 2.5rem var(--pad-r) max(2.5rem, env(safe-area-inset-bottom)) var(--pad);
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 1.5rem;
+      font-size: 0.8125rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    footer address { font-style: normal; display: grid; gap: 0.25rem; }
+    footer .site { color: var(--fg); font-weight: 600; letter-spacing: 0.1em; }
+    footer a { text-decoration: none; transition: color 0.2s ease; }
+    footer a:hover { color: var(--fg); }
+
+    /* Scroll reveal: only hide content when JS is running and motion is OK. */
+    @media (prefers-reduced-motion: no-preference) {
+      .js .reveal {
+        opacity: 0;
+        transform: translateY(2rem);
+        transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+      .js .reveal.in { opacity: 1; transform: none; }
+      .js .reveal-late { transition-delay: 0.15s; }
+    }
+
+    @media (min-width: 48rem) {
+      .specs dl { grid-template-columns: repeat(2, 1fr); column-gap: 3rem; }
+      footer { grid-template-columns: 1fr auto; align-items: end; }
+    }
+    @media (min-width: 64rem) {
+      .feature {
+        grid-template-columns: 5fr 7fr;
+        gap: 4rem;
+        min-height: 100vh;
+        min-height: 100svh;
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+      }
+      .feature:nth-of-type(even) { grid-template-columns: 7fr 5fr; }
+      .feature:nth-of-type(even) .copy { order: 2; }
+      .feature .copy { max-width: 30rem; justify-self: center; }
+      .specs dl { grid-template-columns: repeat(3, 1fr); }
     }
   </style>
 </head>
 <body>
   <a class="skip" href="#content">Skip to content</a>
+
+  <header class="top">
+    <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>BinaryThrottle</a>
+    <a class="top-link" href="#enquire">Enquire</a>
+  </header>
+
+  <!--
+    IMAGES: everything below lives in /assets/camperpower/.
+    The .svg files are PLACEHOLDER RENDERS, not the real product.
+    To swap in a real photo or screenshot, drop it in the same folder
+    (e.g. hero.jpg or hero.webp) and change the src. Keep the 8:5 ratio
+    (960 × 600, or a larger 8:5 size) and update width/height to match.
+  -->
   <main id="content">
-    <a class="mark" href="/"><span class="dot" aria-hidden="true"></span>BinaryThrottle</a>
-
-    <h1>Camper Power</h1>
-    <p class="lede">A slim touchscreen that shows your van’s batteries, solar, charging and heater at a glance.</p>
-    <p class="context">A 2.8″ CYD touchscreen monitor in a slim line case. Optional desk mount and wall mount.</p>
-
-    <nav aria-label="On this page">
-      <a href="#shows">Shows</a>
-      <a href="#connects">Connects</a>
-      <a href="#case">Case</a>
-      <a href="#setup">Setup</a>
-      <a href="#safety">Safety</a>
-      <a href="#enquire">Enquire</a>
-    </nav>
-
-    <section id="shows" aria-labelledby="shows-title">
-      <h2 id="shows-title">What it shows</h2>
-      <ul class="shows">
-        <li>Live battery %</li>
-        <li>Volts and amps</li>
-        <li>Solar today and 7-day history</li>
-        <li>DC-DC charging</li>
-        <li>Heater control</li>
-      </ul>
+    <section class="hero" aria-labelledby="title">
+      <div class="hero-inner">
+        <div class="reveal">
+          <h1 id="title">Camper Power</h1>
+          <p>Your whole van’s power. One screen.</p>
+        </div>
+        <!-- PLACEHOLDER: replace with real product photo, /assets/camperpower/hero.jpg -->
+        <img class="hero-device reveal reveal-late" src="/assets/camperpower/hero.svg" width="960" height="600" fetchpriority="high" decoding="async" alt="Camper Power: a 2.8 inch touchscreen on a yellow board, showing battery, solar, charging and heater on one dashboard.">
+      </div>
+      <span class="cue" aria-hidden="true"></span>
     </section>
 
-    <section id="connects" aria-labelledby="connects-title">
-      <h2 id="connects-title">What it connects to</h2>
-      <ul class="systems">
-        <li>
-          <span class="name">JBD / Xiaoxiang BMS</span>
-          <span class="detail">Including Fogstar Drift and EcoWorthy</span>
-        </li>
-        <li>
-          <span class="name">JK BMS</span>
-        </li>
-        <li>
-          <span class="name">Daly BMS</span>
-        </li>
-        <li>
-          <span class="name">Renogy BT-1 / BT-2</span>
-          <span class="detail">Rover MPPT, DC-DC chargers, batteries</span>
-        </li>
-        <li>
-          <span class="name">Victron Instant Readout</span>
-          <span class="detail">SmartSolar, Orion / DC-DC, SmartShunt / BMV, Smart Lithium, inverters, chargers</span>
-        </li>
-        <li>
-          <span class="name">Victron VE.Direct</span>
-          <span class="detail">Wired</span>
-        </li>
-        <li>
-          <span class="name">Chinese diesel heater</span>
-          <span class="detail">Bluetooth</span>
-        </li>
-      </ul>
-      <p class="planned"><span class="tag">Planned</span> EcoFlow, Jackery.</p>
+    <section class="feature" aria-labelledby="f-battery">
+      <div class="copy reveal">
+        <span class="eyebrow">Battery</span>
+        <h2 id="f-battery">Know your charge</h2>
+        <p>Live battery percentage, volts and amps, straight from your BMS.</p>
+      </div>
+      <figure class="reveal reveal-late">
+        <!-- PLACEHOLDER: replace with real screen photo, /assets/camperpower/screen-battery.jpg -->
+        <img src="/assets/camperpower/screen-battery.svg" width="960" height="600" loading="lazy" decoding="async" alt="Battery screen showing charge percentage, volts and amps.">
+      </figure>
     </section>
 
-    <section id="case" aria-labelledby="case-title">
-      <h2 id="case-title">Case and mounts</h2>
-      <div class="cards">
-        <article class="card">
-          <div class="slot" role="img" aria-label="Product photo to be added: slim line case">
-            <span class="slot-label">Product photo to be added</span>
-            <span class="slot-name">Slim line case</span>
-          </div>
-          <div class="card-body">
-            <h3>Slim line case</h3>
-            <p>The monitor, in its slim line case.</p>
-          </div>
-        </article>
-        <article class="card">
-          <div class="slot" role="img" aria-label="Product photo to be added: desk mount">
-            <span class="slot-label">Product photo to be added</span>
-            <span class="slot-name">Desk mount</span>
-          </div>
-          <div class="card-body">
-            <h3>Desk mount</h3>
-            <p>Optional.</p>
-          </div>
-        </article>
-        <article class="card">
-          <div class="slot" role="img" aria-label="Product photo to be added: wall mount">
-            <span class="slot-label">Product photo to be added</span>
-            <span class="slot-name">Wall mount</span>
-          </div>
-          <div class="card-body">
-            <h3>Wall mount</h3>
-            <p>Optional.</p>
-          </div>
-        </article>
+    <section class="feature" aria-labelledby="f-solar">
+      <div class="copy reveal">
+        <span class="eyebrow">Solar &amp; charging</span>
+        <h2 id="f-solar">Every watt, counted</h2>
+        <p>Solar today, a 7-day history and DC-DC charging, from Victron and Renogy.</p>
+      </div>
+      <figure class="reveal reveal-late">
+        <!-- PLACEHOLDER: replace with real screen photo, /assets/camperpower/screen-solar.jpg -->
+        <img src="/assets/camperpower/screen-solar.svg" width="960" height="600" loading="lazy" decoding="async" alt="Solar screen showing today’s yield, a 7-day bar chart and DC-DC charging current.">
+      </figure>
+    </section>
+
+    <section class="feature" aria-labelledby="f-heater">
+      <div class="copy reveal">
+        <span class="eyebrow">Diesel heater</span>
+        <h2 id="f-heater">Warmth on tap</h2>
+        <p>Control a Bluetooth Chinese diesel heater from the same screen.</p>
+        <p class="note">Follow heater guidelines. Vent, use a CO alarm.</p>
+      </div>
+      <figure class="reveal reveal-late">
+        <!-- PLACEHOLDER: replace with real screen photo, /assets/camperpower/screen-heater.jpg -->
+        <img src="/assets/camperpower/screen-heater.svg" width="960" height="600" loading="lazy" decoding="async" alt="Heater screen with target temperature, plus and minus buttons and an on button.">
+      </figure>
+    </section>
+
+    <section class="feature" aria-labelledby="f-setup">
+      <div class="copy reveal">
+        <span class="eyebrow">Setup</span>
+        <h2 id="f-setup">Finds it all</h2>
+        <p>Autodetect scans for supported systems. Victron keys go in on the display’s own Wi-Fi page.</p>
+      </div>
+      <figure class="reveal reveal-late">
+        <!-- PLACEHOLDER: replace with real screen photo, /assets/camperpower/screen-setup.jpg -->
+        <img src="/assets/camperpower/screen-setup.svg" width="960" height="600" loading="lazy" decoding="async" alt="Autodetect screen listing a BMS, a Victron solar charger, a Renogy DC-DC charger and a diesel heater as found.">
+      </figure>
+    </section>
+
+    <section class="specs" aria-labelledby="specs-title">
+      <h2 id="specs-title" class="eyebrow">Specifications</h2>
+      <dl class="reveal">
+        <div><dt>Display</dt><dd>2.8″ touchscreen, 320 × 240</dd></div>
+        <div><dt>Board</dt><dd>ESP32-2432S028R “Cheap Yellow Display”</dd></div>
+        <div><dt>Battery / BMS</dt><dd>JBD / Xiaoxiang (incl. Fogstar Drift, EcoWorthy), JK, Daly</dd></div>
+        <div><dt>Victron</dt><dd>Instant Readout (Bluetooth), VE.Direct (wired)</dd></div>
+        <div><dt>Renogy</dt><dd>BT-1 / BT-2: Rover MPPT, DC-DC, batteries</dd></div>
+        <div><dt>Heater</dt><dd>Chinese diesel heater, Bluetooth</dd></div>
+        <div><dt>Power</dt><dd>Clean, fast-rising 5V supply, 1A or more</dd></div>
+        <div><dt>Case</dt><dd>Slim line. Optional desk or wall mount</dd></div>
+        <div><dt>Planned</dt><dd>EcoFlow, Jackery</dd></div>
+      </dl>
+    </section>
+
+    <section class="cta" id="enquire" aria-labelledby="enquire-title">
+      <div class="reveal">
+        <h2 id="enquire-title">Get one for your van</h2>
+        <p>Ask about a Camper Power monitor, the slim line case, or a desk or wall mount.</p>
+        <a class="btn" href="mailto:hello@binarythrottle.co.uk?subject=Camper%20Power">Enquire</a>
       </div>
     </section>
-
-    <section id="setup" aria-labelledby="setup-title">
-      <h2 id="setup-title">Easy setup</h2>
-      <p>Use Autodetect to scan for a supported system. Victron Instant Readout keys are entered on the display’s access-point page.</p>
-      <p class="more"><a href="#setup-help">Victron key steps</a></p>
-    </section>
-
-    <section id="setup-help" aria-labelledby="setup-help-title">
-      <h2 id="setup-help-title">Setup help</h2>
-      <h3>Autodetect</h3>
-      <p>Use Autodetect scan to find supported devices.</p>
-      <h3>Victron key</h3>
-      <p>Instant Readout needs the encryption key from Victron Connect.</p>
-      <ol>
-        <li>Open Victron Connect App on your mobile: Select Device.</li>
-        <li>Cog / settings → 3-dot menu → Product info → Instant readout via Bluetooth → Show encryption data.</li>
-        <li>Copy the key.</li>
-        <li>On the CYD, tap <kbd>AP</kbd>.</li>
-        <li>Join the <code>CamperPower-XXXX</code> Wi-Fi with the password shown on the display.</li>
-        <li>Open <a href="http://192.168.4.1">http://192.168.4.1</a> and paste the key, or tap <kbd>EDIT</kbd> to type it.</li>
-      </ol>
-    </section>
-
-    <section id="safety" aria-labelledby="safety-title">
-      <div class="safety">
-        <h2 id="safety-title">Heater safety</h2>
-        <p>Follow Heater Guidelines. Vent, Use CO alarm.</p>
-      </div>
-    </section>
-
-    <section id="power" aria-labelledby="power-title">
-      <h2 id="power-title">Power supply</h2>
-      <p>If it doesn’t start at power-on until you press reset, the supply is likely rising too slowly. Use a clean, fast-rising 5V supply rated 1A or more.</p>
-    </section>
-
-    <section id="enquire" aria-labelledby="enquire-title">
-      <h2 id="enquire-title">Enquire</h2>
-      <p>Ask about a Camper Power monitor, the slim line case, or a desk or wall mount.</p>
-      <!-- TODO: point this at the site contact page when one exists. No contact link is on the site today. -->
-      <div class="todo">
-        <p class="todo-label">TODO</p>
-        <p>Add the enquire link. This site has no contact page yet.</p>
-      </div>
-    </section>
-
-    <footer>
-      <a href="https://github.com/BinaryThrottle/camper-combined-power-monitor">GitHub</a>
-    </footer>
   </main>
+
+  <footer>
+    <address>
+      <a class="site" href="/">binarythrottle.co.uk</a>
+      <a href="mailto:hello@binarythrottle.co.uk">hello@binarythrottle.co.uk</a>
+    </address>
+    <a href="https://github.com/BinaryThrottle/camper-combined-power-monitor">Setup guide on GitHub</a>
+  </footer>
+
+  <script>
+    (function () {
+      var items = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        items.forEach(function (el) { el.classList.add('in'); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+      items.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
 </body>
 </html>
