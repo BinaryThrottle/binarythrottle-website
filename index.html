@@ -4,133 +4,265 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <title>BinaryThrottle</title>
-  <meta name="description" content="BinaryThrottle — coming soon.">
-  <meta name="color-scheme" content="dark light">
+  <meta name="description" content="BinaryThrottle makes ESP32 touchscreen devices: Camper Power for your van's battery, solar and diesel heater, and WLED Remote for WLED lights.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="data:,">
+  <script>document.documentElement.classList.add('js');</script>
   <style>
     :root {
-      --bg: #0b0d10;
-      --fg: #e6e6e6;
-      --muted: #8a8f98;
+      --bg: #000;
+      --fg: #f5f5f5;
+      --muted: #8c8c8c;
+      --line: #1f1f1f;
       --accent: #ff6b35;
-      --border: #1d2025;
-    }
-    @media (prefers-color-scheme: light) {
-      :root {
-        --bg: #fafafa;
-        --fg: #1a1a1a;
-        --muted: #666;
-        --accent: #ff6b35;
-        --border: #e5e5e5;
-      }
+      --pad: max(1.5rem, env(safe-area-inset-left));
+      --pad-r: max(1.5rem, env(safe-area-inset-right));
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; }
+    html { -webkit-text-size-adjust: 100%; background: var(--bg); scroll-behavior: smooth; }
     body {
       background: var(--bg);
       color: var(--fg);
-      font: 16px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Inter, sans-serif;
-      display: grid;
-      place-items: center;
-      padding: 2rem;
+      font: 400 1rem/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
-    main {
-      max-width: 36rem;
-      width: 100%;
-      text-align: left;
+    img { display: block; max-width: 100%; height: auto; }
+    a { color: inherit; }
+    a:focus-visible {
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
     }
-    .mark {
-      display: inline-block;
-      font-weight: 700;
-      font-size: 1.25rem;
-      letter-spacing: -0.02em;
-      padding: 0.25rem 0.75rem;
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      margin-bottom: 2rem;
-    }
-    .mark .dot {
-      display: inline-block;
-      width: 0.5rem;
-      height: 0.5rem;
-      background: var(--accent);
-      border-radius: 50%;
-      margin-right: 0.5rem;
-      vertical-align: 0.1rem;
-    }
-    p.coming-soon {
-      color: var(--accent);
-      font-weight: 600;
-      font-size: 0.875rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      margin-bottom: 0;
-    }
-    .pages {
-      position: fixed;
-      z-index: 1;
-      top: max(0.75rem, env(safe-area-inset-top));
-      right: max(0.75rem, env(safe-area-inset-right));
-    }
-    .pages:not([open]) nav { display: none; }
-    .pages summary {
-      list-style: none;
-      cursor: pointer;
-      width: 2.75rem;
-      height: 2.75rem;
-      display: grid;
-      place-items: center;
-      color: var(--muted);
-      font-size: 1rem;
-      line-height: 1;
-      border-radius: 999px;
-    }
-    .pages summary::-webkit-details-marker { display: none; }
-    .pages summary::marker { content: ""; }
-    .pages summary:hover,
-    .pages[open] summary { color: var(--accent); }
-    .pages summary:focus-visible,
-    .pages a:focus-visible {
-      outline: 2px solid var(--accent);
-      outline-offset: 3px;
-    }
-    .pages nav {
+    .skip {
       position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 0.15rem;
-      background: var(--bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 0.35rem;
-      min-width: 11.5rem;
+      z-index: 20;
+      left: 1rem;
+      top: 1rem;
+      padding: 0.6rem 0.9rem;
+      background: var(--fg);
+      color: var(--bg);
+      transform: translateY(-200%);
     }
-    .pages ul { list-style: none; }
-    .pages a {
-      color: var(--fg);
-      text-decoration: none;
-      display: flex;
+    .skip:focus { transform: none; }
+
+    .eyebrow {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .btn {
+      display: inline-flex;
       align-items: center;
-      min-height: 2.75rem;
-      padding: 0.35rem 0.75rem;
-      border-radius: 8px;
-      font-size: 0.875rem;
+      justify-content: center;
+      min-height: 3rem;
+      padding: 0 1.75rem;
+      border: 2px solid var(--fg);
+      color: var(--fg);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background-color 0.25s ease, color 0.25s ease;
     }
-    .pages a:hover { color: var(--accent); }
+    .btn:hover { background: var(--fg); color: var(--bg); }
+
+    /* Header */
+    .top {
+      position: absolute;
+      z-index: 10;
+      inset: 0 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      column-gap: 1.5rem;
+      padding: max(1.25rem, env(safe-area-inset-top)) var(--pad-r) 0 var(--pad);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      min-height: 44px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .brand .dot {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .top nav ul { display: flex; gap: 1.5rem; list-style: none; }
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--muted);
+      transition: color 0.2s ease;
+    }
+    .top-link:hover { color: var(--fg); }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap;
+    }
+
+    /* Product sections */
+    .product {
+      min-height: 100vh;
+      min-height: 100svh;
+      display: grid;
+      align-content: center;
+      justify-items: center;
+      gap: 2.5rem;
+      padding: 5rem var(--pad-r) 5rem var(--pad);
+      border-top: 1px solid var(--line);
+      text-align: center;
+    }
+    main > .product:first-of-type { border-top: 0; padding-top: 7rem; }
+    .product h2 {
+      margin-top: 0.9rem;
+      font-size: clamp(2.5rem, 10vw, 6rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+      text-wrap: balance;
+    }
+    .product p {
+      margin: 1.1rem auto 0;
+      max-width: 30rem;
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+      color: #cfcfcf;
+      font-weight: 300;
+      text-wrap: balance;
+    }
+    .product .device {
+      width: min(100%, 48rem, calc((100vh - 22rem) * 1.6));
+      width: min(100%, 48rem, calc((100svh - 22rem) * 1.6));
+      min-width: min(100%, 20rem);
+    }
+    .device img { width: 100%; height: auto; }
+    @media (max-width: 47.99rem) {
+      .product { min-height: 0; padding-top: 4.5rem; padding-bottom: 4.5rem; }
+      .product .device {
+        justify-self: stretch;
+        width: auto;
+        min-width: 0;
+        margin: 0 calc(-1 * var(--pad-r)) 0 calc(-1 * var(--pad));
+      }
+    }
+
+    footer {
+      padding: 2.5rem var(--pad-r) max(2.5rem, env(safe-area-inset-bottom)) var(--pad);
+      border-top: 1px solid var(--line);
+      font-size: 0.8125rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    footer address { font-style: normal; display: grid; gap: 0.25rem; }
+    footer .site { color: var(--fg); font-weight: 600; letter-spacing: 0.1em; }
+    footer a { text-decoration: none; transition: color 0.2s ease; }
+    footer a:hover { color: var(--fg); }
+
+    /* Scroll reveal: only hide content when JS is running and motion is OK. */
+    @media (prefers-reduced-motion: no-preference) {
+      .js .reveal {
+        opacity: 0;
+        transform: translateY(2rem);
+        transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+      }
+      .js .reveal.in { opacity: 1; transform: none; }
+      .js .reveal-late { transition-delay: 0.15s; }
+    }
   </style>
 </head>
 <body>
-  <details class="pages">
-    <summary aria-label="Pages"><span aria-hidden="true">π</span></summary>
-    <nav aria-label="Pages">
+  <a class="skip" href="#content">Skip to content</a>
+
+  <header class="top">
+    <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>BinaryThrottle</a>
+    <nav aria-label="Products">
       <ul>
-        <li><a href="/camperpower">Camper Power</a></li>
-        <li><a href="/wledremote">WLED Remote</a></li>
+        <li><a class="top-link" href="/camperpower">Camper Power</a></li>
+        <li><a class="top-link" href="/wledremote">WLED Remote</a></li>
       </ul>
     </nav>
-  </details>
-  <main>
-    <div class="mark"><span class="dot"></span>BinaryThrottle</div>
-    <p class="coming-soon">Website Coming Soon</p>
+  </header>
+
+  <!--
+    IMAGES: real app screenshots composited into renders of the matte black
+    case. Camper Power reuses /assets/camperpower/hero-*; WLED Remote's
+    /assets/wledremote/hero-* is built by tools/wledremote_composite.py.
+  -->
+  <main id="content">
+    <h1 class="sr-only">BinaryThrottle</h1>
+
+    <section class="product" aria-labelledby="p-camper">
+      <div class="reveal">
+        <span class="eyebrow">Campervan power monitor</span>
+        <h2 id="p-camper">Camper Power</h2>
+        <p>Your whole van’s power. One screen.</p>
+      </div>
+      <figure class="device reveal reveal-late">
+        <picture>
+          <source type="image/webp" srcset="/assets/camperpower/hero-960.webp 960w, /assets/camperpower/hero-1240.webp 1240w" sizes="(min-width: 52rem) 48rem, 100vw">
+          <img src="/assets/camperpower/hero-1240.jpg" srcset="/assets/camperpower/hero-960.jpg 960w, /assets/camperpower/hero-1240.jpg 1240w" sizes="(min-width: 52rem) 48rem, 100vw" width="1240" height="776" decoding="async" alt="Camper Power in its matte black case, showing the overview screen: EcoWorthy battery at 87 percent, Renogy DC-DC charging at 21 amps and the diesel heater at 19 degrees.">
+        </picture>
+      </figure>
+      <a class="btn reveal" href="/camperpower">Explore Camper Power</a>
+    </section>
+
+    <section class="product" aria-labelledby="p-wled">
+      <div class="reveal">
+        <span class="eyebrow">WLED controller</span>
+        <h2 id="p-wled">WLED Remote</h2>
+        <p>A slim touchscreen that controls WLED lights over Wi-Fi.</p>
+      </div>
+      <figure class="device reveal reveal-late">
+        <picture>
+          <source type="image/webp" srcset="/assets/wledremote/hero-960.webp 960w, /assets/wledremote/hero-1240.webp 1240w" sizes="(min-width: 52rem) 48rem, 100vw">
+          <img src="/assets/wledremote/hero-1240.jpg" srcset="/assets/wledremote/hero-960.jpg 960w, /assets/wledremote/hero-1240.jpg 1240w" sizes="(min-width: 52rem) 48rem, 100vw" width="1240" height="776" loading="lazy" decoding="async" alt="WLED Remote in its matte black case, showing the home screen: lights on, red picked from a palette of nine colours, with a brightness slider and power button.">
+        </picture>
+      </figure>
+      <a class="btn reveal" href="/wledremote">Explore WLED Remote</a>
+    </section>
   </main>
+
+  <footer>
+    <address>
+      <a class="site" href="/">binarythrottle.co.uk</a>
+      <a href="mailto:hello@binarythrottle.co.uk">hello@binarythrottle.co.uk</a>
+    </address>
+  </footer>
+
+  <script>
+    (function () {
+      var items = document.querySelectorAll('.reveal');
+      if (!('IntersectionObserver' in window)) {
+        items.forEach(function (el) { el.classList.add('in'); });
+        return;
+      }
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+          if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+        });
+      }, { rootMargin: '0px 0px -10% 0px', threshold: 0.15 });
+      items.forEach(function (el) { io.observe(el); });
+    })();
+  </script>
 </body>
 </html>
