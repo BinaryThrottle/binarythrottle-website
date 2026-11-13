@@ -115,28 +115,9 @@
     }
     .top-link:hover { color: var(--fg); }
 
-    /* Brand hero */
-    .intro {
-      min-height: 64vh;
-      min-height: 64svh;
-      display: grid;
-      place-items: center;
-      padding: 7rem var(--pad-r) 3rem var(--pad);
-      text-align: center;
-    }
-    h1 {
-      font-size: clamp(2.25rem, 10.5vw, 7.5rem);
-      font-weight: 800;
-      line-height: 0.92;
-      letter-spacing: -0.02em;
-      text-transform: uppercase;
-    }
-    .intro p {
-      margin-top: 1.25rem;
-      font-size: clamp(1.05rem, 2.4vw, 1.375rem);
-      color: #cfcfcf;
-      font-weight: 300;
-      text-wrap: balance;
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; overflow: hidden;
+      clip: rect(0 0 0 0); white-space: nowrap;
     }
 
     /* Product sections */
@@ -151,6 +132,7 @@
       border-top: 1px solid var(--line);
       text-align: center;
     }
+    main > .product:first-of-type { border-top: 0; padding-top: 7rem; }
     .product h2 {
       margin-top: 0.9rem;
       font-size: clamp(2.5rem, 10vw, 6rem);
@@ -227,12 +209,7 @@
     /assets/wledremote/hero-* is built by tools/wledremote_composite.py.
   -->
   <main id="content">
-    <section class="intro" aria-labelledby="title">
-      <div class="reveal">
-        <h1 id="title">BinaryThrottle</h1>
-        <p>Touchscreen devices, built on the ESP32.</p>
-      </div>
-    </section>
+    <h1 class="sr-only">BinaryThrottle</h1>
 
     <section class="product" aria-labelledby="p-camper">
       <div class="reveal">
