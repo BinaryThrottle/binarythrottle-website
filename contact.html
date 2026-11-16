@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>Enquire — BinaryThrottle</title>
+  <meta name="description" content="Enquire about BinaryThrottle products, including Camper Power and WLED Remote.">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="data:,">
+  <script>
+    document.documentElement.classList.add('js');
+    if (/(?:^|[?&])sent=1(?:&|$)/.test(location.search)) {
+      document.documentElement.classList.add('sent');
+      document.title = 'Thank you — BinaryThrottle';
+    }
+  </script>
+  <style>
+    :root {
+      --bg: #000;
+      --fg: #f5f5f5;
+      --muted: #8c8c8c;
+      --line: #1f1f1f;
+      --accent: #ff6b35;
+      --pad: max(1.5rem, env(safe-area-inset-left));
+      --pad-r: max(1.5rem, env(safe-area-inset-right));
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-text-size-adjust: 100%; background: var(--bg); scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font: 400 1rem/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Inter, "Helvetica Neue", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: inherit; }
+    a:focus-visible {
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
+    }
+    .skip {
+      position: absolute;
+      z-index: 20;
+      left: 1rem;
+      top: 1rem;
+      padding: 0.6rem 0.9rem;
+      background: var(--fg);
+      color: var(--bg);
+      transform: translateY(-200%);
+    }
+    .skip:focus { transform: none; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 3rem;
+      padding: 0 1.75rem;
+      border: 2px solid var(--fg);
+      background: transparent;
+      color: var(--fg);
+      font: inherit;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+    .btn:hover { background: var(--fg); color: var(--bg); }
+    .btn:focus-visible {
+      outline: 2px solid var(--fg);
+      outline-offset: 4px;
+    }
+
+    .top {
+      position: absolute;
+      z-index: 10;
+      inset: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: max(1.25rem, env(safe-area-inset-top)) var(--pad-r) 0 var(--pad);
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      min-height: 44px;
+      font-weight: 700;
+      font-size: 0.875rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+    .brand .dot {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .top-link {
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--muted);
+      transition: color 0.2s ease;
+    }
+    .top-link:hover,
+    .top-link[aria-current="page"] { color: var(--fg); }
+
+    .page {
+      min-height: 100vh;
+      min-height: 100svh;
+      display: grid;
+      align-content: start;
+      justify-items: center;
+      padding: 6.5rem var(--pad-r) 4rem var(--pad);
+      text-align: center;
+    }
+    h1 {
+      font-size: clamp(2.5rem, 10vw, 6rem);
+      font-weight: 800;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      text-transform: uppercase;
+    }
+    .lede {
+      margin: 1.25rem auto 0;
+      max-width: 28rem;
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+      color: #cfcfcf;
+      font-weight: 300;
+      text-wrap: balance;
+    }
+
+    .contact-form,
+    .thanks {
+      width: min(100%, 32rem);
+      margin-top: 2.25rem;
+      text-align: left;
+    }
+    .thanks { display: none; text-align: center; }
+    .thanks p {
+      color: #cfcfcf;
+      font-weight: 300;
+      font-size: clamp(1.05rem, 2.2vw, 1.25rem);
+      text-wrap: balance;
+    }
+    .thanks .btn { margin-top: 2.25rem; }
+    .title-thanks { display: none; }
+    html.sent .contact-form { display: none; }
+    html.sent .lede { display: none; }
+    html.sent .title-enquire { display: none; }
+    html.sent .title-thanks { display: block; }
+    html.sent .thanks { display: block; }
+
+    .field { display: grid; gap: 0.45rem; margin-bottom: 1.25rem; }
+    .field label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%;
+      background: #0a0a0a;
+      color: var(--fg);
+      border: 1px solid #333;
+      border-radius: 0;
+      padding: 0.75rem 1rem;
+      font: inherit;
+      min-height: 3rem;
+    }
+    .field textarea {
+      min-height: 7rem;
+      resize: vertical;
+    }
+    .field select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%238c8c8c' d='M1.2 1.2 6 6l4.8-4.8' stroke='%238c8c8c' stroke-width='1.4' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      padding-right: 2.5rem;
+    }
+    .field input:focus-visible,
+    .field select:focus-visible,
+    .field textarea:focus-visible {
+      outline: 2px solid var(--fg);
+      outline-offset: 2px;
+      border-color: var(--fg);
+    }
+    .contact-form .btn { margin-top: 0.5rem; width: 100%; }
+
+    .honey {
+      position: absolute;
+      left: -10000px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    footer {
+      padding: 2.5rem var(--pad-r) max(2.5rem, env(safe-area-inset-bottom)) var(--pad);
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 1.5rem;
+      font-size: 0.8125rem;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+    footer address { font-style: normal; display: grid; gap: 0.25rem; }
+    footer .site { color: var(--fg); font-weight: 600; letter-spacing: 0.1em; }
+    footer a { text-decoration: none; transition: color 0.2s ease; }
+    footer a:hover { color: var(--fg); }
+
+    @media (min-width: 48rem) {
+      footer { grid-template-columns: 1fr auto; align-items: end; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+
+  <header class="top">
+    <a class="brand" href="/"><span class="dot" aria-hidden="true"></span>BinaryThrottle</a>
+    <a class="top-link" href="/contact" aria-current="page">Enquire</a>
+  </header>
+
+  <main id="content" class="page">
+    <h1 class="title-enquire" id="title">Enquire</h1>
+    <h1 class="title-thanks">Thank you</h1>
+    <p class="lede" id="lede">Tell us what you need and we’ll get back to you.</p>
+
+    <form class="contact-form" action="https://formsubmit.co/hello@binarythrottle.co.uk" method="POST">
+      <input type="hidden" name="_subject" value="BinaryThrottle enquiry">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="https://www.binarythrottle.co.uk/contact?sent=1">
+      <input type="hidden" name="_replyto" value="">
+      <div class="honey" aria-hidden="true">
+        <label for="company">Company</label>
+        <input type="text" id="company" name="_honey" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" autocomplete="name" required>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="email" required>
+      </div>
+      <div class="field">
+        <label for="product">Product</label>
+        <select id="product" name="product" required>
+          <option value="">Select</option>
+          <option value="Camper Power">Camper Power</option>
+          <option value="WLED Remote">WLED Remote</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required></textarea>
+      </div>
+      <button class="btn" type="submit">Send</button>
+    </form>
+
+    <div class="thanks" id="thanks">
+      <p>Thanks, your message is on its way. We’ll get back to you at the email you gave.</p>
+      <a class="btn" href="/">Back to home</a>
+    </div>
+  </main>
+
+  <footer>
+    <address>
+      <a class="site" href="/">binarythrottle.co.uk</a>
+      <a href="/contact">hello@binarythrottle.co.uk</a>
+    </address>
+  </footer>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var select = document.getElementById('product');
+      var wanted = params.get('product');
+      if (select && wanted) {
+        var match = wanted.replace(/\+/g, ' ').toLowerCase();
+        for (var i = 0; i < select.options.length; i++) {
+          if (select.options[i].value.toLowerCase() === match) {
+            select.value = select.options[i].value;
+            break;
+          }
+        }
+      }
+
+      var subject = document.querySelector('input[name="_subject"]');
+      var next = document.querySelector('input[name="_next"]');
+      var reply = document.querySelector('input[name="_replyto"]');
+      var email = document.getElementById('email');
+
+      function syncSubject() {
+        if (!subject || !select) return;
+        subject.value = select.value
+          ? 'BinaryThrottle enquiry: ' + select.value
+          : 'BinaryThrottle enquiry';
+      }
+      function syncNext() {
+        if (!next) return;
+        var path = /contact\.html$/.test(location.pathname) ? '/contact.html' : '/contact';
+        next.value = location.origin + path + '?sent=1';
+      }
+      function syncReply() {
+        if (reply && email) reply.value = email.value;
+      }
+
+      syncSubject();
+      syncNext();
+      if (select) select.addEventListener('change', syncSubject);
+      if (email) {
+        email.addEventListener('input', syncReply);
+        email.addEventListener('change', syncReply);
+      }
+    })();
+  </script>
+</body>
+</html>
