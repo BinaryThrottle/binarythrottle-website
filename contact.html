@@ -201,6 +201,28 @@
       border-color: var(--fg);
     }
     .contact-form .btn { margin-top: 0.5rem; width: 100%; }
+    .btn:disabled,
+    .btn:disabled:hover {
+      opacity: 0.6;
+      cursor: wait;
+      background: transparent;
+      color: var(--fg);
+    }
+
+    .form-error {
+      display: none;
+      margin-top: 1.25rem;
+      color: #cfcfcf;
+      font-weight: 300;
+      text-align: center;
+      text-wrap: balance;
+    }
+    .form-error a {
+      color: var(--fg);
+      text-decoration: underline;
+      text-underline-offset: 0.2em;
+    }
+    html.failed .form-error { display: block; }
 
     .honey {
       position: absolute;
@@ -243,15 +265,11 @@
     <h1 class="title-thanks">Thank you</h1>
     <p class="lede" id="lede">Tell us what you need and we’ll get back to you.</p>
 
-    <form class="contact-form" action="https://formsubmit.co/hello@binarythrottle.co.uk" method="POST">
-      <input type="hidden" name="_subject" value="BinaryThrottle enquiry">
-      <input type="hidden" name="_captcha" value="false">
-      <input type="hidden" name="_next" value="https://www.binarythrottle.co.uk/contact?sent=1">
-      <input type="hidden" name="_replyto" value="">
-      <div class="honey" aria-hidden="true">
-        <label for="company">Company</label>
-        <input type="text" id="company" name="_honey" tabindex="-1" autocomplete="off">
-      </div>
+    <form class="contact-form" action="https://api.web3forms.com/submit" method="POST">
+      <input type="hidden" name="access_key" value="8c26292a-1dce-41c1-9195-b81f8488a11f">
+      <input type="hidden" name="from_name" value="BinaryThrottle website">
+      <input type="hidden" name="subject" value="BinaryThrottle enquiry">
+      <input type="checkbox" name="botcheck" class="honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none">
 
       <div class="field">
         <label for="name">Name</label>
@@ -275,9 +293,10 @@
         <textarea id="message" name="message" required></textarea>
       </div>
       <button class="btn" type="submit">Send</button>
+      <p class="form-error" id="form-error" role="alert" tabindex="-1">Sorry, the message didn’t send. Please try again, or email <a href="mailto:hello@binarythrottle.co.uk">hello@binarythrottle.co.uk</a>.</p>
     </form>
 
-    <div class="thanks" id="thanks">
+    <div class="thanks" id="thanks" tabindex="-1">
       <p>Thanks, your message is on its way. We’ll get back to you at the email you gave.</p>
       <a class="btn" href="/">Back to home</a>
     </div>
@@ -292,9 +311,14 @@
 
   <script>
     (function () {
-      var params = new URLSearchParams(window.location.search);
+      var form = document.querySelector('.contact-form');
       var select = document.getElementById('product');
+      var subject = document.querySelector('input[name="subject"]');
+      var button = form && form.querySelector('button[type="submit"]');
+      var error = document.getElementById('form-error');
+      var params = new URLSearchParams(window.location.search);
       var wanted = params.get('product');
+
       if (select && wanted) {
         var match = wanted.replace(/\+/g, ' ').toLowerCase();
         for (var i = 0; i < select.options.length; i++) {
@@ -305,33 +329,72 @@
         }
       }
 
-      var subject = document.querySelector('input[name="_subject"]');
-      var next = document.querySelector('input[name="_next"]');
-      var reply = document.querySelector('input[name="_replyto"]');
-      var email = document.getElementById('email');
-
       function syncSubject() {
         if (!subject || !select) return;
         subject.value = select.value
           ? 'BinaryThrottle enquiry: ' + select.value
           : 'BinaryThrottle enquiry';
       }
-      function syncNext() {
-        if (!next) return;
-        var path = /contact\.html$/.test(location.pathname) ? '/contact.html' : '/contact';
-        next.value = location.origin + path + '?sent=1';
-      }
-      function syncReply() {
-        if (reply && email) reply.value = email.value;
+      syncSubject();
+      if (select) select.addEventListener('change', syncSubject);
+
+      function showThanks() {
+        document.documentElement.classList.remove('failed');
+        document.documentElement.classList.add('sent');
+        document.title = 'Thank you — BinaryThrottle';
+        var thanks = document.getElementById('thanks');
+        if (thanks) thanks.focus();
       }
 
-      syncSubject();
-      syncNext();
-      if (select) select.addEventListener('change', syncSubject);
-      if (email) {
-        email.addEventListener('input', syncReply);
-        email.addEventListener('change', syncReply);
+      function restoreButton() {
+        if (!button) return;
+        button.disabled = false;
+        button.removeAttribute('aria-busy');
+        button.textContent = 'Send';
       }
+
+      function showError() {
+        document.documentElement.classList.add('failed');
+        restoreButton();
+        if (error) error.focus();
+      }
+
+      if (!form || !window.fetch) return;
+
+      form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        syncSubject();
+        if (button) {
+          button.disabled = true;
+          button.setAttribute('aria-busy', 'true');
+          button.textContent = 'Sending…';
+        }
+        document.documentElement.classList.remove('failed');
+
+        var data = Object.fromEntries(new FormData(form));
+        fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify(data)
+        })
+          .then(function (response) {
+            return response.json().then(function (json) {
+              return json;
+            }, function () {
+              return { success: false };
+            });
+          })
+          .then(function (json) {
+            if (json && json.success) showThanks();
+            else showError();
+          })
+          .catch(function () {
+            showError();
+          });
+      });
     })();
   </script>
 </body>
